@@ -1,0 +1,24 @@
+# Core dependencies
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# AI & ML
+google-generativeai>=0.3.0  # Gemini API
+
+# Browser Automation
+playwright>=1.40.0
+
+# Image Processing
+Pillow>=10.1.0
+
+# Data Processing
+pandas>=2.1.0
+
+# Utilities
+tqdm>=4.66.0
+
+# Google APIs (uncomment if needed for other features)
+# google-auth>=2.23.0
+# google-auth-oauthlib>=1.1.0
+# google-auth-httplib2>=0.1.1
+# google-api-python-client>=2.100.0

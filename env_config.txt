@@ -1,0 +1,13 @@
+# Gemini API Key
+GEMINI_API_KEY=AIzaSyClNIdI1D2jeB7WiI47LWSZ3KbxtlveEXI
+
+# ManageBac Credentials (fill these in)
+MANAGEBAC_URL=https://your-school.managebac.com
+MANAGEBAC_USERNAME=your_username
+MANAGEBAC_PASSWORD=your_password
+
+# Training Data Path
+TRAINING_DATA_PATH=Resala CAS Project trainng
+
+# Model Configuration
+GEMINI_MODEL=gemini-2.0-flash-exp
