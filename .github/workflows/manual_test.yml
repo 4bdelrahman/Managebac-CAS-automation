@@ -1,0 +1,71 @@
+name: Manual CAS Test
+
+on:
+  workflow_dispatch:  # Only manual trigger
+
+jobs:
+  manual-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Install Playwright browsers
+      run: |
+        playwright install chromium
+        playwright install-deps
+        
+    - name: Run Full CAS Workflow (Bypass Scheduler)
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        MANAGEBAC_URL: ${{ secrets.MANAGEBAC_URL }}
+        MANAGEBAC_USERNAME: ${{ secrets.MANAGEBAC_USERNAME }}
+        MANAGEBAC_PASSWORD: ${{ secrets.MANAGEBAC_PASSWORD }}
+        GEMINI_MODEL: "gemini-1.5-flash-latest"
+        CI: "true"
+      run: |
+        echo "🚀 Manual Test - Running Full Workflow"
+        
+        # 1. Generate Idea
+        echo "📝 Step 1: Generating idea..."
+        python execution/generate_idea.py
+        
+        # 2. Generate Reflection
+        echo "✍️ Step 2: Generating reflection..."
+        python execution/generate_reflection.py --auto
+        
+        # 3. Submit to ManageBac
+        echo "📤 Step 3: Submitting to ManageBac..."
+        python execution/submit_to_managebac.py --auto
+        
+        echo "✅ Manual test complete!"
+    
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: manual-test-output
+        path: |
+          .tmp/generated_idea.json
+          .tmp/generated_reflection.json
+          .tmp/submission_screenshot.png
+        if-no-files-found: ignore
+    
+    - name: Upload debug traces (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: manual-test-traces
+        path: .tmp/
+        if-no-files-found: ignore
