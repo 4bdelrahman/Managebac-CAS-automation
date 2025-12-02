@@ -15,17 +15,31 @@ load_dotenv()
 
 # Configure Gemini
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
-model = genai.GenerativeModel('gemini-2.5-flash')
+model = genai.GenerativeModel(os.getenv('GEMINI_MODEL', 'gemini-1.5-flash-latest'))
 
 def load_context() -> str:
-    """Load project context from training data."""
-    training_path = Path(os.getenv('TRAINING_DATA_PATH', 'Resala CAS Project trainng'))
+    """Load project context from training data (optional)."""
+    training_path_str = os.getenv('TRAINING_DATA_PATH', 'Resala CAS Project trainng')
+    training_path = Path(training_path_str)
     desc_file = training_path / 'Text training' / 'Description and goals.txt'
     
-    if desc_file.exists():
-        with open(desc_file, 'r', encoding='utf-8') as f:
-            return f.read()
-    return "Volunteering at Resala Charity, organizing clothes and helping the community."
+    # Try to load from file, fall back to default context
+    if training_path.exists() and desc_file.exists():
+        try:
+            with open(desc_file, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception:
+            pass
+    
+    # Default context if no training data available
+    return """Resala Charity CAS Project:
+    Regular volunteering at Resala Charity in Cairo, participating in community service activities such as:
+    - Sorting and organizing donated clothes for distribution to those in need
+    - Packing food boxes during Ramadan and special occasions
+    - Warehouse management and inventory organization
+    - Coordinating with volunteers and helping newcomers
+    - Supporting various community outreach programs
+    This project focuses on Service learning outcomes and developing organizational skills."""
 
 def generate_idea() -> dict:
     """Generate a new valid activity idea."""

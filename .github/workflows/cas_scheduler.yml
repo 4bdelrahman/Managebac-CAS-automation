@@ -2,8 +2,8 @@ name: CAS Autopilot
 
 on:
   schedule:
-    # Run every 4 days at 10:00 UTC
-    - cron: '0 10 */4 * *'
+    # Run daily at 10:00 UTC (let run_if_due.py decide if execution needed)
+    - cron: '0 10 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -29,24 +29,33 @@ jobs:
         playwright install chromium
         playwright install-deps
         
-    - name: Run CAS Automation
+    - name: Run CAS Automation (Smart Scheduler)
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         MANAGEBAC_URL: ${{ secrets.MANAGEBAC_URL }}
         MANAGEBAC_USERNAME: ${{ secrets.MANAGEBAC_USERNAME }}
         MANAGEBAC_PASSWORD: ${{ secrets.MANAGEBAC_PASSWORD }}
-        TRAINING_DATA_PATH: "Resala CAS Project trainng"
         GEMINI_MODEL: "gemini-1.5-flash-latest"
+        CI: "true"
       run: |
-        # 1. Generate Idea
-        python execution/generate_idea.py
-        
-        # 2. Generate Reflection
-        python execution/generate_reflection.py --auto
-        
-        # 3. Submit to ManageBac
-        # Note: Headless mode is forced in CI environments usually, 
-        # but our script defaults to headless=False. 
-        # We might need to ensure it runs headless in CI.
-        # For now, let's assume XVFB handles the display or we update the script.
-        python execution/submit_to_managebac.py --auto
+        python execution/run_if_due.py
+    
+    - name: Upload generated artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: cas-automation-output
+        path: |
+          .tmp/generated_idea.json
+          .tmp/generated_reflection.json
+          .tmp/submission_screenshot.png
+          .tmp/last_run.json
+        if-no-files-found: ignore
+    
+    - name: Upload Playwright traces (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: playwright-traces
+        path: .tmp/
+        if-no-files-found: ignore

@@ -25,7 +25,13 @@ class ManageBacAutomation:
         Args:
             headless: Run browser in headless mode (no visible window)
         """
-        self.headless = headless
+        # Force headless in CI environments (GitHub Actions, etc.)
+        is_ci = os.getenv('CI') == 'true' or os.getenv('GITHUB_ACTIONS') == 'true'
+        self.headless = headless or is_ci
+        
+        if is_ci:
+            print("🤖 CI environment detected - running in headless mode")
+        
         self.managebac_url = os.getenv('MANAGEBAC_URL')
         self.username = os.getenv('MANAGEBAC_USERNAME')
         self.password = os.getenv('MANAGEBAC_PASSWORD')
