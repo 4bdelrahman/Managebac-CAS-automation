@@ -35,7 +35,7 @@ jobs:
         MANAGEBAC_URL: ${{ secrets.MANAGEBAC_URL }}
         MANAGEBAC_USERNAME: ${{ secrets.MANAGEBAC_USERNAME }}
         MANAGEBAC_PASSWORD: ${{ secrets.MANAGEBAC_PASSWORD }}
-        GEMINI_MODEL: "gemini-1.5-flash"
+        GEMINI_MODEL: "gemini-2.5-flash"
         CI: "true"
       run: |
         python execution/run_if_due.py
