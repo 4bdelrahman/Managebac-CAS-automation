@@ -15,7 +15,7 @@ load_dotenv()
 
 # Configure Gemini
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
-model = genai.GenerativeModel(os.getenv('GEMINI_MODEL', 'gemini-2.5-flash'))
+model = genai.GenerativeModel(os.getenv('GEMINI_MODEL', 'gemini-2.5-pro'))
 
 
 def load_training_data() -> Dict:
@@ -125,21 +125,19 @@ IMAGE ANALYSIS:
     
     prompt += """
 INSTRUCTIONS:
+
 1. Write in the SAME STYLE as the example reflections above
 2. Match the tone, vocabulary level, and structure
 3. Be authentic and personal - this should sound like the student who wrote the examples
 4. Include specific details from the activity description and image analysis
-5. Reference the learning outcomes naturally (e.g., "This showed me LO1..." or "I demonstrated LO5 by...")
+5. Use simple language  that is B2 or C1 that is easy to understand , and try to link between  the things you did and the learning outcome 
 6. Keep it concise but meaningful (similar length to the examples)
 7. Use a mix of English and Arabic terms where appropriate (like the examples)
 8. Focus on personal growth, challenges, and impact
+9.simple and clear english writen in the way of the diary that prsonalize on using I.
 
-FORMAT:
-Reflection [number]: [Title] (LO[X] & LO[Y])
-Date: [date]
-CAS Strand: [strand]
 
-[Reflection text - 2-3 paragraphs]
+[Reflection text - 1 paragraph , 300 Words limit ]
 
 Write the reflection now:"""
 
